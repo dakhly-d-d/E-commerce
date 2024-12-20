@@ -1,0 +1,69 @@
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.stage.Stage;
+
+public class ShoppingCartGUI extends Application {
+    private CartManager cartManager = CartManager.getInstance();
+    
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+        
+        primaryStage.setTitle("Shopping Cart");
+
+        
+        Label cartTotalLabel = new Label("Cart Total: $0.00");
+        Button addItemButton = new Button("Add Item to Cart");
+        Button clearCartButton = new Button("Clear Cart");
+        Button checkoutButton = new Button("Checkout");
+
+        
+        ListView<String> cartItemsList = new ListView<>();
+        
+        
+        addItemButton.setOnAction(event -> {
+            Item item = new Item("Laptop", "electronics", 1200.00); // Example item
+            cartManager.addItemToCart(item);
+            cartItemsList.getItems().add(item.getName());
+            cartTotalLabel.setText("Cart Total: $" + cartManager.calculateTotal());
+        });
+
+        
+        clearCartButton.setOnAction(event -> {
+            cartManager.clearCart();
+            cartItemsList.getItems().clear();
+            cartTotalLabel.setText("Cart Total: $0.00");
+        });
+
+        
+        checkoutButton.setOnAction(event -> {
+            double totalAmount = cartManager.calculateTotal();
+            CustomerOrder order = new CustomerOrder("123 Main St", totalAmount, "Standard", "John Doe");
+            System.out.println("Order Created: " + order.getCustomerName() + " - Total: $" + totalAmount);
+            
+            
+            PaymentGateway paymentGateway = PaymentGateway.getInstance();
+            boolean paymentSuccess = paymentGateway.processPayment("credit card", totalAmount);
+            
+            if (paymentSuccess) {
+                System.out.println("Payment processed successfully.");
+            } else {
+                System.out.println("Payment failed.");
+            }
+        });
+
+        
+        VBox layout = new VBox(10);
+        layout.getChildren().addAll(cartItemsList, cartTotalLabel, addItemButton, clearCartButton, checkoutButton);
+        
+       
+        Scene scene = new Scene(layout, 400, 300);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+}
