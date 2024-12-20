@@ -1,0 +1,24 @@
+-- Create the database
+CREATE DATABASE ShopDB;
+GO
+
+-- Use the created database
+USE ShopDB;
+GO
+
+-- Create the inventory table
+CREATE TABLE inventory (
+    itemId INT IDENTITY(1,1) PRIMARY KEY,
+    itemName NVARCHAR(100) NOT NULL,
+    itemCategory NVARCHAR(100) NOT NULL,
+    itemPrice FLOAT NOT NULL
+);
+
+-- Create the Orders table
+CREATE TABLE Orders (
+    orderId INT IDENTITY(1,1) PRIMARY KEY,
+    deliveryAddress NVARCHAR(255) NOT NULL,
+    totalAmount FLOAT NOT NULL,
+    orderType NVARCHAR(50) NOT NULL,
+    customerName NVARCHAR(100) NOT NULL
+);
